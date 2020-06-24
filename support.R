@@ -1,13 +1,8 @@
 source("/home/yanpan/getIt/shared_url_builder.R")
 
 # global vars -------------------------------------------------------------
+
 gds_main       <- "https://datastudio.google.com/u/1/reporting/1lWsOIgy6lHabGl02NY7ksTE77JemG1Q1/page/qrNUB"
-gds_link0      <- "https://datastudio.google.com/embed/reporting/1ukaD_dazWh7RtMN0YWhFTBf9QRUA2tM5/page/siJAB"
-gds_link2      <- "https://datastudio.google.com/embed/reporting/1Q7qhSEiQ_TvBqeIP4Cq8YB14iEatc_GG/page/MK9AB"
-ihg_link1      <- 'https://www.ihg.com/intercontinental/hotels/gb/en/find-hotels/hotel/rooms?qDest=InterContinental%20Fiji%20Golf%20Resort%20%26%20Spa,%20Natadola,%20Fiji&qDest=Maro%20Road,%20Natadola,%20FJ&qCiMy=72020&qCiD=14&qCoMy=72020&qCoD=17&qAdlt=2&qChld=0&qRms=1&qRtP=6CBARC&qIta=99502222&qSlH=NANHA&qAkamaiCC=FI&qSrt=sBR&qBrs=re.ic.in.vn.cp.vx.hi.ex.rs.cv.sb.cw.ma.ul.ki.va.ii.sp.nd.ct&qAAR=6CBARC&qWch=0&qSmP=1&setPMCookies=false&qRad=30&qRdU=mi&srb_u=1&qSHBrC=IC'
-ihg_link2      <- 'https://www.ihg.com/intercontinental/hotels/gb/en/find-hotels/hotel/rooms?qDest=InterContinental%20Fiji%20Golf%20Resort%20%26%20Spa,%20Natadola,%20Fiji&qDest=Maro%20Road,%20Natadola,%20FJ&qCiMy=72020&qCiD=13&qCoMy=72020&qCoD=17&qAdlt=2&qChld=0&qRms=1&qRtP=6CBARC&qIta=99502222&qSlH=NANHA&qAkamaiCC=FI&qSrt=sBR&qBrs=re.ic.in.vn.cp.vx.hi.ex.rs.cv.sb.cw.ma.ul.ki.va.ii.sp.nd.ct&qAAR=6CBARC&qWch=0&qSmP=1&setPMCookies=false&qRad=30&qRdU=mi&srb_u=1&qSHBrC=IC'
-ihg_link1      <- 'https://www.ihg.com/intercontinental/hotels/gb/en/find-hotels/hotel/rates?qCiMy=72020&qCiD=14&qCoMy=72020&qCoD=17&qAdlt=2&qChld=0&qRms=1&qRtP=6CBARC&qIta=99502222&qSlH=NANHA&qSlRc=XLOG&qAkamaiCC=FI&qSrt=sBR&qBrs=re.ic.in.vn.cp.vx.hi.ex.rs.cv.sb.cw.ma.ul.ki.va.ii.sp.nd.ct&qAAR=6CBARC&qWch=0&qSmP=1&setPMCookies=false&qRad=30&qRdU=mi&srb_u=1&qSHBrC=IC'
-ihg_link2      <- 'https://www.ihg.com/intercontinental/hotels/gb/en/find-hotels/hotel/rates?qCiMy=72020&qCiD=13&qCoMy=72020&qCoD=17&qAdlt=2&qChld=0&qRms=1&qRtP=6CBARC&qIta=99502222&qSlH=NANHA&qSlRc=XLOG&qAkamaiCC=FI&qSrt=sBR&qBrs=re.ic.in.vn.cp.vx.hi.ex.rs.cv.sb.cw.ma.ul.ki.va.ii.sp.nd.ct&qAAR=6CBARC&qWch=0&qSmP=1&setPMCookies=false&qRad=30&qRdU=mi&srb_u=1&qSHBrC=IC'
 print_log_opts <- c("Today Brief", "Today All", "Summary", "All (max 1000 rows)")
 flight_3segs   <- c("HEL-KIX, SYD-HKG, HKG-HEL",
                     "HEL-TYO, SYD-HKG, HKG-HEL",

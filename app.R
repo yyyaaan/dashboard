@@ -73,16 +73,6 @@ ui <- material_page(
       material_card("Accomondatoin by destinations and nights (colored by rate type)",
                     tags$img(src = "mrtplot.png", width = "100%"),
                     tags$a(href = gds_main, class = "waves-effect waves-light btn", tags$i(class = "material-icons left", "filter_center_focus"), "Interactive"))
-    ),
-    material_row(
-      material_column(width = 6,
-                      tags$div(class = "wrapss", uiOutput("iframe0"))),
-      material_column(width = 6,
-                      tags$div(class = "wrap18",  uiOutput("iframe2")),
-                      material_checkbox("loadFrames", "Show secondary dashboard (massive data, full control)", initial_value = FALSE),
-                      tags$p(HTML(html_test_code), tags$i(" | "),
-                             tags$a(href=ihg_link1, "IHG 3nts"), tags$i("  |  "), 
-                             tags$a(href=ihg_link2, "IHG 4nts")))
     )
   ),
   
@@ -190,7 +180,7 @@ server <- function(session, input, output) {
   flt <- readRDS("/home/yanpan/getIt/results/sharing.rds")
   output$fltdt    <- renderDT(build_df_scrollY(scrollY = 390)(flt$df_best))
   output$fltpivot <- renderDT(build_df_heatmap(scrollY = 550)(flt$df_pivot))
-  output$fltsel   <- renderDT(build_df_scrollY(scrollY = 550, hide_targets = c(0:8))(
+  output$fltsel   <- renderDT(build_df_scrollY(scrollY = 550, hide_targets = c(0:9))(
     tryCatch(flt$df_combo %>% 
                filter(ddate == flt$df_pivot$ddate[input$fltpivot_cells_selected[1,1]], 
                       rdate == colnames(flt$df_pivot)[input$fltpivot_cells_selected[1,2] + 1]) %>%
@@ -199,7 +189,7 @@ server <- function(session, input, output) {
                       `Outbound<br/>Inbound` = route %>% gsub("\\|", "<br/>",.),
                       `Best(link)<br/>EUR` = paste0("<a target='_blank' href = '", href, "'>", ceiling(eur), " €</a><br />(", ceiling(eur1), "+", ceiling(eur2), ")")) %>%
                arrange(eur),
-             error = function(e) data.frame(0,1,2,3,4,5,6,7, #toString(e),
+             error = function(e) data.frame(0,1,2,3,4,5,6,7,8, #toString(e),
                                             Tip = "Select Dates in Calendar First<br /> For all data, click the button at right bottom")
     )
   ))
@@ -216,16 +206,6 @@ server <- function(session, input, output) {
     print_log_all(input$log_sel, input$log_rev)
   })
 
-  
-
-  # DataStudio iFrames ------------------------------------------------------
-
-  # output$iframe0  <- renderUI(tags$iframe(src = gds_link0))
-  observeEvent(input$loadFrames, {
-      output$iframe2 <- renderUI(tags$iframe(src = gds_link2))
-      toggle(selector = '.wrap18')
-  })
-
 
   # Flight URL tools --------------------------------------------------------
 
@@ -236,9 +216,9 @@ server <- function(session, input, output) {
 
   observeEvent(input$inRoute, {
     if(nchar(input$inRoute) < 18) {
-      update_material_text_box(session, "inDates",  "2021-03-29 2021-04-17")
+      update_material_text_box(session, "inDates",  "2021-05-29 2021-06-17")
     } else {
-      update_material_text_box(session, "inDates",  "2021-03-29 2021-04-17 2021-04-21")
+      update_material_text_box(session, "inDates",  "2021-05-29 2021-06-13 2021-06-17")
     }
     update_material_text_box(session, "inDests", input$inRoute)
   })
