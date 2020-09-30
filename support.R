@@ -2,7 +2,11 @@ source("/home/yanpan/getIt/shared_url_builder.R")
 
 # global vars -------------------------------------------------------------
 
-gds_main       <- "https://datastudio.google.com/u/1/reporting/1lWsOIgy6lHabGl02NY7ksTE77JemG1Q1/page/qrNUB"
+flt <- readRDS("/home/yanpan/getIt/results/sharing.rds")
+htl <- readRDS("/home/yanpan/getIt/results/sharing_mrt.rds")
+month_choices  <- flt$df_combo %>% names %>% sort(decreasing = TRUE)
+gds_qr01       <- "https://datastudio.google.com/u/1/reporting/1lWsOIgy6lHabGl02NY7ksTE77JemG1Q1/page/qrNUB"
+gds_mrt01      <- ""
 print_log_opts <- c("Today Brief", "Today All", "Summary", "All (max 1000 rows)")
 flight_3segs   <- c("HEL-KIX, SYD-HKG, HKG-HEL",
                     "HEL-TYO, SYD-HKG, HKG-HEL",
@@ -14,9 +18,9 @@ flight_3segs   <- c("HEL-KIX, SYD-HKG, HKG-HEL",
                     "HEL-NAN, PPT-LAX, LAX-HEL",
                     "HEL-PPT, PPT-LAX, LAX-HEL")
 flight_2segs   <- c("HEL-NAN, SYD-HEL",
-                    "ARN-NAN, SYD-HEL",
-                    "ARN-CBR, CBR-HEL",
-                    "AMS-SYD, CBR-HEL",
+                    "OSL-NAN, SYD-OSL",
+                    "OSL-CBR, CBR-OSL",
+                    "OSL-SYD, CBR-OSL",
                     "HEL-HND, SYD-HEL",
                     "HEL-SYD, SYD-HEL",
                     "HEL-MEL, MEL-HEL",
@@ -29,7 +33,9 @@ css_content    <- "
       .wrapss{position: relative; padding-bottom:  85%;}
       iframe {position: absolute; top: 0; left: 0; width: 100%; height: 100%;}
       pre    {overflow: auto; font-size: 0.8em;}
-      .col .row{margin-left: 1%; width: 98%;}"
+      .col .row{margin-left: 1%; width: 98%;}
+      td.dt-center {vertical-align: text-top !important;}
+"
 
 
 # Support Functions -------------------------------------------------------

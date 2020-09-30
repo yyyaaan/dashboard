@@ -3,7 +3,7 @@ library(shinyjs)
 library(tidyverse)
 library(DT) 
 source("support.R")
-source("shared_styler.R")
+source("shared_styler.R") 
 
 # UI ----------------------------------------------------------------------
 
@@ -40,12 +40,23 @@ ui <- material_page(
                            "Logs" = "tab_logs", "Utilities" = "tab_util")),
   
 
-  # UI side1 dashboard ------------------------------------------------------
+  # UI side1 dash -----------------------------------------------------------
   material_tab_content(
     tab_id = "tab_dash",
+    material_row(
+      tags$div(class = "col m2 s1", 
+               HTML('<div class="right-align" style="margin-top: 25px"><i class="material-icons small">date_range</i></div>')),
+      tags$div(class = "col m4 s7",
+               material_dropdown("fltMonth", " ", choices = month_choices)),
+      tags$div(class = "col m6 s4",
+               tags$div(class="right", style="margin-top: 25px",
+                        HTML('<a href="#card-flight"><i class="material-icons small">flight_takeoff</i></a>   
+                              <a href="#card-hotel"> <i class="material-icons small">hotel</i></a>'),
+                        actionLink("linkModal1", HTML('<i class="material-icons small">view_list</i>'))))
+    ),
+    
     material_card(
-      "Find the best price",
-      tags$br(),
+      "", tags$span(id = "card-flight"),
       material_row(
         material_column(width = 9,
                         dataTableOutput("fltpivot", width = "99%"),
@@ -53,42 +64,63 @@ ui <- material_page(
         material_column(width = 3,
                         dataTableOutput("fltsel"))
       ),
-      tags$p("Use", tags$a(href = gds_main, " DataStudio "), "to explore pricing history and more."),
-      tags$p("To search for a route, use ", actionLink("linkModal", "Table View"), " here."),
-      material_modal("show_dt", "", "",
-                     dataTableOutput("fltdt"),
-                     button_icon = "featured_play_list", button_depth = 1, button_color = "cyan",
-                     floating_button    = TRUE,
-                     close_button_label = "Close", 
-                     display_button     = TRUE))
-  ),
-  material_tab_content(
-    tab_id = "tab_plot",
-    material_row(
-      material_card("Fligth by destinations (colored by departure cities)",
-                    tags$img(src = "fltplot.png", width = "100%"),
-                    tags$a(href = gds_main, class = "waves-effect waves-light btn", tags$i(class = "material-icons left", "filter_center_focus"), "Interactive"))
+      tags$p("Use", tags$a(href = gds_qr01, " DataStudio "), "to explore pricing history and more."),
+      tags$p("To search for a route, use ", actionLink("linkModal2", "Table View"), " here."),
     ),
-    material_row(
-      material_card("Accomondatoin by destinations and nights (colored by rate type)",
-                    tags$img(src = "mrtplot.png", width = "100%"),
-                    tags$a(href = gds_main, class = "waves-effect waves-light btn", tags$i(class = "material-icons left", "filter_center_focus"), "Interactive"))
-    )
+    
+    material_card(
+      "", tags$span(id = "card-flight-hel"),
+      material_row(
+        material_column(width = 9,
+                        dataTableOutput("fltpivot2", width = "99%"))
+      ),
+      tags$p("Showing route with Helsinki or Tallinn"),
+    ),
+    
+    material_card(
+      "", tags$span(id = "card-hotel"),
+      dataTableOutput("hoteldt"),
+      tags$p(tags$br(), "Shows the trend within selected month (not all hotels are available every month). Hover to see the exact price.")
+    ),
+    
+    material_modal("modal_dt", "", "",
+                   dataTableOutput("fltdt"),
+                   button_icon = "view_list", button_depth = 1, button_color = "cyan",
+                   close_button_label = "Close", 
+                   floating_button    = TRUE,
+                   display_button     = TRUE)
+    
   ),
   
-  # UI side1 log display ----------------------------------------------------
+
+  # UI side1 pics -----------------------------------------------------------
+  
+  material_tab_content(
+    tab_id = "tab_plot",
+    material_card("Fligth by destinations (colored by departure cities)",
+                  HTML('
+<div class="row">
+<img class="col s12 xl6" src="fltplot1.png"></img>
+<img class="col s12 xl6" src="fltplot2.png"></img>
+<img class="col s12 xl6" src="fltplot3.png"></img>
+<img class="col s12 xl6" src="fltplot4.png"></img>
+</div>'),
+                  tags$a(href = gds_qr01, class = "waves-effect waves-light btn", 
+                         tags$i(class = "material-icons left", "filter"), "Interactive")
+    ),
+    material_card("Accomondatoin by destinations and nights (colored by rate type)",
+                  HTML('
+<div class="row">
+<img class="col s12 xl6" src="mrtplot1.png"></img>
+<img class="col s12 xl6" src="mrtplot2.png"></img>
+</div>'),
+                  tags$a(href = gds_mrt01, class = "waves-effect waves-light btn", 
+                         tags$i(class = "material-icons left", "filter_center_focus"), "Interactive"))
+  ),
+  
+  # UI side1 log ------------------------------------------------------------
     material_tab_content(
       tab_id = "tab_logs",
-      material_modal("show_hotels", "Legends", "Hotel Names",
-                     tags$p("1 St.Regis Bora Bora"),
-                     tags$p("2 Le Meridien Bora Bora"),
-                     tags$p("3 Le Meridien Ile des Pins"),
-                     tags$p("4 Fiji Marriot Resort Momi Bay"),
-                     tags$p("5 Sheraton Resort & Spa, Tokoriki Island, Fiji"),
-                     button_icon = "format_list_numbered", button_depth = 1, button_color = "cyan",
-                     floating_button    = TRUE,
-                     close_button_label = "Close", 
-                     display_button     = TRUE),
       material_card(title = "Logs", verbatimTextOutput("logprint"))
     ),
   ),
@@ -177,26 +209,38 @@ server <- function(session, input, output) {
 
   # getIt output ------------------------------------------------------------
 
-  flt <- readRDS("/home/yanpan/getIt/results/sharing.rds")
+  ## in the modal box
   output$fltdt    <- renderDT(build_df_scrollY(scrollY = 390)(flt$df_best))
-  output$fltpivot <- renderDT(build_df_heatmap(scrollY = 550)(flt$df_pivot))
-  output$fltsel   <- renderDT(build_df_scrollY(scrollY = 550, hide_targets = c(0:9))(
-    tryCatch(flt$df_combo %>% 
-               filter(ddate == flt$df_pivot$ddate[input$fltpivot_cells_selected[1,1]], 
-                      rdate == colnames(flt$df_pivot)[input$fltpivot_cells_selected[1,2] + 1]) %>%
-               rowwise() %>% 
-               mutate(href = flight_url_qatar_by_data(route, ddate, rdate),
-                      `Outbound<br/>Inbound` = route %>% gsub("\\|", "<br/>",.),
-                      `Best(link)<br/>EUR` = paste0("<a target='_blank' href = '", href, "'>", ceiling(eur), " €</a><br />(", ceiling(eur1), "+", ceiling(eur2), ")")) %>%
-               arrange(eur),
-             error = function(e) data.frame(0,1,2,3,4,5,6,7,8, #toString(e),
-                                            Tip = "Select Dates in Calendar First<br /> For all data, click the button at right bottom")
+  ## calendar
+  output$fltpivot  <- renderDT(build_df_heatmap(scrollY = 550)(flt$df_pivot[[input$fltMonth]]))
+  output$fltpivot2 <- renderDT(build_df_heatmap(scrollY = 550)(flt$df_pivot2[[input$fltMonth]]))
+  ## responsive table
+  output$fltsel   <- renderDT(build_df_scrollY(scrollY = 550, hide_targets = 0:10)(
+    tryCatch(
+      flt$df_combo[[input$fltMonth]] %>% 
+        filter(ddate == flt$df_pivot[[input$fltMonth]]$ddate[input$fltpivot_cells_selected[1,1]], 
+               rdate == colnames(flt$df_pivot[[input$fltMonth]])[input$fltpivot_cells_selected[1,2] + 1]) %>%
+        rowwise() %>% 
+        mutate(href = flight_url_qatar_by_data(route, ddate, rdate),
+               hrefx= sprintf("https://europe-west1-yyyaaannn.cloudfunctions.net/qr-trend?q_route=%s&q_ddate=%s&q_rdate=%s", route, ddate, rdate),
+               `Outbound<br/>Inbound` = route %>% gsub("\\|", "<br/>",.),
+               `€ Link <sub>[as of]</sub><br/>EUR` = paste0("<a target='_blank' href = '", href, "'>", ceiling(eur), "€</a> <sub>[",paste0("<a target='_blank' href = '", hrefx, "'>", format(as.Date(ts), "%d%b"), "</a>"), "]</sub><br />(", ceiling(eur1), "+", ceiling(eur2), ")")) %>%
+        arrange(eur),
+      error = function(e) data.frame(
+        0,1,2,3,4,5,6,7,8,9, #toString(e),
+        Tip = "Select Dates in Calendar First<br /> For all data, click the button at right bottom")
     )
   ))
-  observeEvent(input$linkModal, open_material_modal(session, "show_dt"))
   
+  observeEvent(input$linkModal1, open_material_modal(session, "modal_dt"))
+  observeEvent(input$linkModal2, open_material_modal(session, "modal_dt"))
   
-  output$debug <- renderPrint({" "})
+  output$hoteldt <- renderDT(build_df_spark()(htl$df_hotel[[input$fltMonth]]))
+   
+  output$debug <- renderPrint({
+    paste(file.info("/home/yanpan/getIt/results/sharing.rds")$mtime, 
+          file.info("/home/yanpan/getIt/results/sharing_mrt.rds")$mtime)
+  })
   
 
   # print cron log with AutoRefresher ---------------------------------------
@@ -207,7 +251,7 @@ server <- function(session, input, output) {
   })
 
 
-  # Flight URL tools --------------------------------------------------------
+  # flight URL tools --------------------------------------------------------
 
   observeEvent(input$inPlus1day,  {update_material_text_box(session, "inDates", mod_date(input$inDates, 1))})
   observeEvent(input$inPlus7day,  {update_material_text_box(session, "inDates", mod_date(input$inDates, 7))})
@@ -230,7 +274,7 @@ server <- function(session, input, output) {
   observeEvent(input$inOpenPre, {
     open_material_modal(session, "show_predefined")
   })
-}
+} 
 
 
 

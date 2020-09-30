@@ -30,7 +30,7 @@ if(weekdays(Sys.Date()) == weekdays(as.Date("2020-06-04"))){
 
 # do not change below -----------------------------------------------------
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-# As of 2020-06-23 00:01:02
+# As of 2020-09-30 00:01:02
 # 
 # ## cronR job
 # ## id:   job_cron
